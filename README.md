@@ -1,10 +1,10 @@
 # proyecto-programacion
 Este es un repositorio en el cual se desarrollaran uno o varios proyectos simples de programación en Python.
 ## Integrantes:
-  Laura Alfonso    
+  Laura Viviana Alfonso Diaz
   Gabriel Muriel    
-  Julian Osorio    
-  Felipe Ospina    
+  Julián D. Osorio    
+  Felipe Ospina Suarez   
   Carolina Valenzuela  
 # Proyecto
 Se hará una simulación del movimiento de un péndulo en dos dimensiones.
