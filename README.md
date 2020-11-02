@@ -7,7 +7,7 @@ Este es un repositorio en el cual se desarrollaran uno o varios proyectos simple
   Felipe Ospina    
   Carolina Valenzuela  
 # Proyecto
-Se hará una simulación del movimiento de un péndulo en dos ( o tres?) dimensiones.
+Se hará una simulación del movimiento de un péndulo en dos dimensiones.
 
 
 
