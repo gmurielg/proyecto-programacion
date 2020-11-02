@@ -1,7 +1,7 @@
 # proyecto-programacion
 Este es un repositorio en el cual se desarrollaran uno o varios proyectos simples de programación en Python.
 ## Integrantes:
-  Laura Viviana Alfonso Diaz
+  Laura Viviana Alfonso Diaz  
   Gabriel Muriel    
   Julián D. Osorio    
   Felipe Ospina Suarez   
