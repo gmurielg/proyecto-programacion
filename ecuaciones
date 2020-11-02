@@ -1,0 +1,13 @@
+# Ecuaciones que pueden ser relevantes para el proyecto del péndulo simple. (?)
+
+# A partir de un punto con coordenadas x,y y un pendulo de longitud l con una gravedad g
+import math
+theta = math.acos((l-y)/l)
+x(t + dt) = l*math.sin(theta) * (t + dt)
+y(t + dt) = l - l*math.cos(theta) * (t + dt)
+accl = -g*math.sin(theta)
+alpha(t) = -g/l * math.sin(theta) * t
+vel_angular(t+dt) = vel_angular(t) + alpha(t)*dt
+
+
+
