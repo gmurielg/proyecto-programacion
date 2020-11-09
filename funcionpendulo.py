@@ -8,10 +8,15 @@ Created on Tue Nov  3 07:45:36 2020
 from vpython import * # Libreria que permite crear objetos 3D de manera sencilla
 import math
 
+
 #Funcion que muestra un pendulo en movimiento sin fricción
 def pendulo(longitud_pendulo,
-            amplitud_inicial,
+            amplitud_inicial, #Angulo en radianes
             gravedad = 9.8,
+            velocidad_inicial = 0,
+            resistencia = 0.01,
+            tiempo_max = 100, # Tiempo en segundos
+            mostrar_grafica = True,
             radio_bolita = 3,
             color_pendulo = vector(1,1,1),
             ):
@@ -23,6 +28,8 @@ def pendulo(longitud_pendulo,
     punto_apoyo= vector(0,0,-10) # Eje de oscilacion del pendulo
     color_p = color_pendulo #Color de la bolita del pendul
     g = gravedad
+    vel = velocidad_inicial
+    tmax = tiempo_max*10
     
     # Linea que define el display o canvas
     display(width=600, height=600, background=(0,0,0)) 
@@ -50,16 +57,17 @@ def pendulo(longitud_pendulo,
         ) 
     t = 0
     dt = 0.01
-    vel = 0
     
-    
+    #Se crea una grafica de curva de color verde
+    grafica = gcurve(color=color.green)
+        
     # Loop que hace que el pendulo se mueva reevaluando su posición durante un tiempo
-    while t < 100:
+    while t < tmax:
         #Número de calculos por segundo que se hacen. Determina velocidad de animacion
-        rate(100)
+        rate(1000)
         
         # Aceleracion angular
-        accl_angular = -g/l*math.sin(theta) 
+        accl_angular = -g/l*math.sin(theta) - resistencia*vel
         
         vel = vel+accl_angular*dt # Velocidad angular
         
@@ -72,8 +80,12 @@ def pendulo(longitud_pendulo,
         cuerda.axis = (bolita.pos - punto_apoyo) 
         
         t = t + dt #Avance del tiempo
-
+       
+        if mostrar_grafica:
+            #Se va plotteando la grafica creada con puntos en los ejes de tiempo y angulo
+            grafica.plot((t, theta))
 
 # Ejemplo de un pendulo con parametros especificos
-pendulo(100,math.pi/4,)
+pendulo(100,0.8,)
+
 
