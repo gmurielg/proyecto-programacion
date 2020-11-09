@@ -9,11 +9,20 @@ from vpython import * # Libreria que permite crear objetos 3D de manera sencilla
 import math
 
 #Funcion que muestra un pendulo en movimiento sin fricción
-def pendulo(longitud_pendulo,amplitud_inicial, radio_bolita = 3, color_pendulo = vector(1,1,1)):
+def pendulo(longitud_pendulo,
+            amplitud_inicial,
+            gravedad = 9.8,
+            radio_bolita = 3,
+            color_pendulo = vector(1,1,1),
+            ):
+    
+    
+    
     l = longitud_pendulo
     theta = amplitud_inicial # Angulo interno desde la linea vertical hasta la posicion actual
     punto_apoyo= vector(0,0,-10) # Eje de oscilacion del pendulo
-    color_p = color_pendulo #Color de la bolita del pendulo
+    color_p = color_pendulo #Color de la bolita del pendul
+    g = gravedad
     
     # Linea que define el display o canvas
     display(width=600, height=600, background=(0,0,0)) 
@@ -42,7 +51,7 @@ def pendulo(longitud_pendulo,amplitud_inicial, radio_bolita = 3, color_pendulo =
     t = 0
     dt = 0.01
     vel = 0
-    g = 9.8
+    
     
     # Loop que hace que el pendulo se mueva reevaluando su posición durante un tiempo
     while t < 100:
@@ -66,5 +75,5 @@ def pendulo(longitud_pendulo,amplitud_inicial, radio_bolita = 3, color_pendulo =
 
 
 # Ejemplo de un pendulo con parametros especificos
-pendulo(100,math.pi/4,10)
+pendulo(100,math.pi/4,)
 
