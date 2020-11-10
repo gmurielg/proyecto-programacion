@@ -2,7 +2,7 @@
 """
 Created on Sun Nov  8 23:24:21 2020
 
-@author: Personal
+@author: Laura Viviana A. - Julián D. Osorio
 """
 #%gui qt5
 from vpython import*
