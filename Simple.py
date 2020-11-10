@@ -58,4 +58,4 @@ while t < 104:
   cuerda.axis = esfera.pos - cuerda.pos # extremo nuevo
   t+=dt 
   
-  recorrido.plot((t, theta))
+  recorrido.plot((t, theta)) ###
