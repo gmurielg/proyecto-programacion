@@ -145,5 +145,5 @@ def pendulo_doble(longitud_pendulo1,
             grafica.plot((theta2, theta1))
 
 #Ejemplo de un pendulo doble    
-pendulo_doble(10, 0.5, 10, 0.42, 5, 5,9.8,0,0,60,True,1,1,color.purple,color.orange)
+pendulo_doble(10, math.pi, 10, 0.01, 5, 5,9.8,0,0,60,True,1,1,color.purple,color.orange)
 
