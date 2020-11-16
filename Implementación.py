@@ -184,7 +184,7 @@ class PenduloAcoplado(Pendulo):
         ## Creacíon de la gráfica y variables adicionales############
         gd = graph( width = 600, height = 300,
                 title = '<b>Diagrama de fases</b>',
-                xtitle = '<i>Theta</i>', ytitle = '<i>Velocidad angular</i>',
+                xtitle = '<i>Tiempo</i>', ytitle = '<i>Theta</i>',
                 foreground = color.black, background = color.white)
     
         fase1 = gcurve( color = color.orange,  label = 'bolita1' )
@@ -233,8 +233,8 @@ class PenduloAcoplado(Pendulo):
             resorte.axis.y =   - l* np.cos(theta2)/2 + l* np.cos(theta1)/2
         
             # Plot del diagrama de fases
-            fase1.plot( pos=(theta1, angular1) )
-            fase2.plot( pos=(theta2, angular2) )
+            fase1.plot( pos=(t, theta1) )
+            fase2.plot( pos=(t, theta2) )
 
 try:
     while True:
