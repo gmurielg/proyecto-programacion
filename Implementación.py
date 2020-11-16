@@ -183,7 +183,7 @@ class PenduloAcoplado(Pendulo):
         
         ## Creacíon de la gráfica y variables adicionales############
         gd = graph( width = 600, height = 300,
-                title = '<b>Diagrama de fases</b>',
+                title = '<b>Oscilaciones</b>',
                 xtitle = '<i>Tiempo</i>', ytitle = '<i>Theta</i>',
                 foreground = color.black, background = color.white)
     
