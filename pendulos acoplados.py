@@ -9,9 +9,9 @@ from vpython import *
 import numpy as np
 
 def pendulo_acoplado(gravedad = 9.8,
-                     constante_resorte = 10,
+                     constante_resorte = 0.1,
                      masa = 0.1,
-                     angulo1 = 0.61,
+                     angulo1 = 0,
                      angulo2 = 0.52,
                      longitud = 10,
                      distancia = 10,
@@ -60,8 +60,8 @@ def pendulo_acoplado(gravedad = 9.8,
 ## Gráfica y variables adicionales ######################################################################################################################
 
     gd = graph( width = 600, height = 300,
-                title = '<b>Diagrama de fases</b>',
-                xtitle = '<i>Theta</i>', ytitle = '<i>Velocidad angular</i>',
+                title = '<b>Oscilaciones</b>',
+                xtitle = '<i>Tiempo</i>', ytitle = '<i>Theta</i>',
                 foreground = color.black, background = color.white)
     
     phase_1 = gcurve( color = color.orange,  label = 'bolita1' )
@@ -109,8 +109,8 @@ def pendulo_acoplado(gravedad = 9.8,
         resorte.axis.y =   - l* np.cos(theta2)/2 + l* np.cos(theta1)/2
     
         # Plot del diagrama de fases
-        phase_1.plot( pos=(theta1, angular1) )
-        phase_2.plot( pos=(theta2, angular2) )
+        phase_1.plot( pos=(t, theta1) )
+        phase_2.plot( pos=(t, theta2) )
         
 
 ## Ejemplo del funcionamiento de la función sin especificar parametros ####################################################
