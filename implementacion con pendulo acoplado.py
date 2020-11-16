@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 15 18:11:22 2020
+Created on Sun Nov 15 17:48:29 2020
 
 @author: gabit
 """
 
 from vpython import *
 import numpy as np
-
 #Condiciones iniciales
 
 omega_zero = float(input('Velocidad angular inicial: '))
@@ -98,7 +97,7 @@ class PenduloSimple(Pendulo):
 class PenduloAmortiguado(Pendulo):
     
     def __init__ (self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 104, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 100, dt = 0.001)
     
     def osc(self,gamma):
         '''
@@ -136,40 +135,19 @@ class PenduloAmortiguado(Pendulo):
             
             t += self.dt 
             
-            self.recorrido.plot((t, self.theta))
+            self.recorrido.plot((t, self.theta)) 
 
 class PenduloAcoplado(Pendulo):
-    def __init__(self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 50, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 50, dt = 0.001)
-    
-    def osc(self,constante_k, masa, distancia, angulo2):
-        
-        #Reasignación de variables###
-        
-        g = self.g              # Gravedad
-        k = constante_k                   # Constante de resorte
-        m = masa                # Masa de las bolitas
-        
-        theta1 = self.theta        # ángulo de la primera masa
-        theta2 = angulo2
-        l = self.l              # Longitud de los pendulos
-        d = distancia           # Distancia entre las dos bolitas
-            
-        T  = self.t              # Tiempo de simulación
-        dt = self.dt             # Delta t
-            
-            
-        x1, y1 =     l* np.sin(theta1), -l* np.cos(theta1) #Coordenadas bolita1
-        x2, y2 = d + l* np.sin(theta2), -l* np.cos(theta2) #Coordenadas bolita2
-            
-        self.display
+    def __init__(self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 104, dt = 0.001):
+        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+    def osc(self):
         
         #Objetos a definir
         techo = box( pos = vector(d/2, 0, 0), size = vector(d + 0.5, 0.5, 0.5),
                     color = color.white)
      
-        bolita1 = sphere( pos = vector(x1, y1, 0), radius = l*0.03, color = color.orange)
-        bolita2 = sphere( pos = vector(x2, y2, 0), radius = l*0.03, color = color.purple)
+        bolita1 = sphere( pos = vector(x1, y1, 0), radius = l*0.1, color = color.orange)
+        bolita2 = sphere( pos = vector(x2, y2, 0), radius = l*0.1, color = color.purple)
         
         cuerda1 = cylinder(pos = vector(0, 0, 0), axis = vector(l* np.sin(theta1),
                             -l* np.cos(theta1), 0), radius = 0.05, color = vector(120,100,70))
@@ -187,12 +165,12 @@ class PenduloAcoplado(Pendulo):
                 xtitle = '<i>Theta</i>', ytitle = '<i>Velocidad angular</i>',
                 foreground = color.black, background = color.white)
     
-        fase1 = gcurve( color = color.orange,  label = 'bolita1' )
-        fase2 = gcurve( color = color.purple, label = 'bolita2' )
+        phase_1 = gcurve( color = color.orange,  label = 'bolita1' )
+        phase_2 = gcurve( color = color.purple, label = 'bolita2' )
         
         #Velocidades angulares iniciales
-        angular1 = self.omega
-        angular2 = self.omega
+        angular1 = 0
+        angular2 = 0
         
         t = 0
         
@@ -233,9 +211,9 @@ class PenduloAcoplado(Pendulo):
             resorte.axis.y =   - l* np.cos(theta2)/2 + l* np.cos(theta1)/2
         
             # Plot del diagrama de fases
-            fase1.plot( pos=(theta1, angular1) )
-            fase2.plot( pos=(theta2, angular2) )
-
+            phase_1.plot( pos=(theta1, angular1) )
+            phase_2.plot( pos=(theta2, angular2) )
+        
 try:
     while True:
         modo = input('Seleccione el sistema a simular.\nSimple:s\nAmortiguado:a\nForzado:f\nAcoplado:c\n')
@@ -248,20 +226,8 @@ try:
             gamma = float(input('Asigne un coeficiente de amortiguamiento: ')) 
             Amortiguado = PenduloAmortiguado(omega_zero, theta_zero)
             Amortiguado.osc(gamma)
-        if modo == 'c':
-            constante_k = float(input('Asigne una constante de resorte: ')) 
-            masa = float(input('Asigne una masa para ambos péndulos: '))
-            distancia = float(input('Asigne una distancia d entre ambos péndulos: '))
-            angulo2 = float(input('Asigne un ángulo para el segundo péndulo: ')) 
-            Acoplado = PenduloAcoplado(omega_zero,theta_zero)
-            Acoplado.osc(constante_k, masa, distancia, angulo2)
         else:
             print('Modo invalido, intente de nuevo')
- 
-# Este except sirve para ver cual es la variable que falta o que error hay en el try
-#except Exception as e: 
-    #print(e)
+        
 except:
     print('Por favor, defina las variables primero')
-##
-
