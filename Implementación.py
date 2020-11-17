@@ -13,24 +13,19 @@ from vpython import *
 import numpy as np
 import math
 
-#Condiciones iniciales
+# =============================================================================
+# Pendulos Simples
+# =============================================================================
 
-theta_zero = float(input('Amplitud angular inicial: '))
-omega_zero = float(input('Velocidad angular inicial: '))
-
-dt = float(input('Diferencial temporal: '))
-tmax = float(input('Tiempo de Oscilación: '))
-
-#Father class
-class Pendulo(object):
+class Simple(object):
     
-    def __init__ (self, omega_zero, theta_zero, g = 9.784, l=10., tmax = 12, dt = 0.001):
+    def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10., tmax = 10.4, dt = 0.001):
         '''
         Genera el objeto pendulo bajo las condiciones iniciales de movimiento
         Parameters
         ----------
-        omega_zero : float
-            Velocidad anfular inicial (Enegia cinetica suministrada)
+        omega_zero : float, optional
+            Velocidad anfular inicial (Enegia cinetica suministrada). The default is 0
         theta_zero : float
             Amplitud angular inicial en rad.
         g : float, optional
@@ -52,23 +47,19 @@ class Pendulo(object):
         self.dt = dt
         self.theta = theta_zero
         self.natural= -g/l
-        self.display = display(width=600, height=300,background=color.black)
-        
-        grapf = graph(width=645,height=400, xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',foreground=color.black, background=color.black)
-        self.recorrido = gcurve(graph=grapf, color=color.orange)
-        
+       
     def osc(self):
         raise NotImplementedError
         
     def __str__(self):
-        print('Este es un sistema de pendulos acoplados')
+        print('Este es un sistema de pendulo simple')
   
         
 #Children classes
-class PenduloLibre(Pendulo):
+class SLibre(Simple):
     
-    def __init__ (self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+    def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10, tmax = 10.4, dt = 0.001):
+        Simple.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
         
     def osc(self):
         '''
@@ -79,7 +70,13 @@ class PenduloLibre(Pendulo):
         None.
         
         '''      
-        self.display
+        scene = canvas(title = '<b>Pendulo Libre</b>',width = 645, height = 400,
+                       background = color.black)
+        
+        graf=graph(width=645,height=400,title='',
+                    xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                    foreground=color.black, background=color.white)
+        recorrido = gcurve(graph=graf, label = 'Pendulo', color=color.orange) 
         
         pivot=vector(0,0,-10)
         esfera=sphere(pos=vector(self.l*sin(self.theta), pivot.y - self.l*cos(self.theta), -10),radius=0.55,color=color.white,make_trail = True, 
@@ -99,12 +96,12 @@ class PenduloLibre(Pendulo):
           cuerda.axis = esfera.pos - cuerda.pos 
           n+=self.dt 
           
-          self.recorrido.plot((n, self.theta)) 
+          recorrido.plot((n, self.theta)) 
           
-class PenduloAmortiguado(Pendulo):
+class SAmortiguado(Simple):
     
-    def __init__ (self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 104, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+    def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10, tmax = 10.4, dt = 0.001):
+        Simple.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
     
     def osc(self,gamma):
         '''
@@ -116,7 +113,13 @@ class PenduloAmortiguado(Pendulo):
         None.
         
         '''  
-        self.display
+        scene = canvas(title = '<b>Pendulo Amortiguado</b>',width = 645, height = 400,
+                       background = color.black)
+        
+        graf=graph(width=645,height=400,title='',
+                    xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                    foreground=color.black, background=color.white)
+        recorrido = gcurve(graph=graf, label = 'Pendulo', color=color.orange) 
         
         pivot=vector(0,0,-10)
         esfera=sphere(pos=vector(self.l*sin(self.theta), pivot.y - self.l*cos(self.theta), -10),radius=0.55,color=color.white,make_trail = True, 
@@ -142,14 +145,267 @@ class PenduloAmortiguado(Pendulo):
             
             t += self.dt 
             
-            self.recorrido.plot((t, self.theta)) 
+            recorrido.plot((t, self.theta)) 
+            
+class SForzado(Simple):
+    
+    def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10, tmax = 10.4, dt = 0.001):
+        Simple.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+
+
+            
+            
+# =============================================================================
+# Doble
+# =============================================================================
+
+class PenduloDoble(object):
+    
+    def __init__(self, omega1 = 0, omega2 = 0, masa1 = 1.25, masa2= 1.25, theta1=pi/3, 
+                 theta2=pi/3,g = 9.784, l=10, tmax = 10.4, dt = 0.001):
+        
+        self.g = g
+        self.l = l
+        self.omega1 = omega1
+        self.omega2 = omega2
+        self.t= tmax*10
+        self.dt = dt
+        self.theta1 = theta1
+        self.theta2 = theta2
+        self.masa1 = masa1
+        self.masa2 = masa2
+    
+    def osc(self):
+        
+        l1 = self.l
+        l2 = self.l
+        g = self.g
+        theta1 = self.theta1 # Angulo interno
+        theta2 = self.theta2
+        m1 = self.masa1
+        m2 = self.masa2
+        mt = m1+m2
+        
+        punto_apoyo= vector(0,0,-5) # Eje de oscilacion del pendulo
+        vel1 = self.omega1
+        vel2 = self.omega2
+        T = self.t
+        
+        
+        # Linea que define el display o canvas
+        scene = canvas(title = '<b>Pendulo Doble</b>',width = 645, height = 400,
+                       background = color.black)     
+        # Cubo donde se fija el punto de apoyo o eje del pendulo
+        techo = box(pos=punto_apoyo,size=vector(0.5,0.5,0.5), color = color.gray(0.3))
+       
+        # Esfera que cuelga del pendulo
+        bolita1 = sphere(
+            pos=vector(l1*math.sin(theta1),-l1*math.cos(theta1),-5),
+            radius = l1*0.035,
+            color = color.white, 
+            make_trail = True, 
+            trail_type = 'points', 
+            trail_color = color.orange, 
+            interval=25, 
+            retain=50   
+            )
+        
+        bolita2 = sphere(
+            pos=vector(l1*math.sin(theta1) + l2*math.sin(theta2),
+                       -l1*math.cos(theta1)-l2*math.cos(theta2),
+                       -5
+                       ),
+            radius = l2*0.035,
+            color = color.white, 
+            make_trail = True, 
+            trail_color = color.blue,
+            interval=25,
+            retain=500
+            )
+        
+        #Objeto del que tiende la masa del pendulo
+        cuerda = cylinder(pos=punto_apoyo,
+            axis=(bolita1.pos - punto_apoyo),
+            radius=0.05, color=color.white
+            )
+        
+        #Objeto del que tiende la segunda masa
+        cuerda2 = cylinder(pos=bolita1.pos,
+            axis=(bolita2.pos - bolita1.pos),
+            radius=0.05, color=color.white
+            )
+        
+        
+        t = 0
+        dt = self.dt
+        cos21 = math.cos(theta2-theta1)
+        sin21 = math.sin(theta2-theta1)
+        
+        cos12 = math.cos(theta1-theta2)
+        sin12 = math.sin(theta1-theta2)
+    
+    
+        
+        
+        #Se crea una grafica de curva de color verde
+        gd = graph( width = 600, height = 300,
+        title = '<b></b>',
+        xtitle = '<i>Tiempo</i>', ytitle = '<i>Amplitud</i>',
+        foreground = color.black, background = color.white)
+    
+        curva1 = gcurve( color = color.orange,  label = 'Pendulo 1' )
+        curva2 = gcurve( color = color.blue, label = 'Pendulo 2' )
+            
+        # Loop que hace que el pendulo se mueva reevaluando su posición durante un tiempo
+        while t < T:
+            #Número de calculos por segundo que se hacen. Determina velocidad de animacion
+            rate(1500)
+            
+            # Aceleracion angular
+                #Partes de la ecuación
+            pa = -m2*l2*vel2**2*sin12-mt*g*math.sin(theta1)
+            pb = m2*l2*cos12
+            pc = (l1*vel1**2*sin12-g*math.sin(theta2))/l2  
+            pd = mt*l1
+            pe = l1/l2*cos12
+            
+            angular1 = (pa-pb*pc)/(pd-pb*pe)
+            
+            angular2 = pc-pe*angular1
+            
+            vel1 = vel1 + angular1*dt # Velocidad angular
+            
+            vel2 = vel2 + angular2*dt
+            
+            theta1 = theta1 + vel1*dt # Reevaluacion del ángulo interno del pendulo
+            theta2 = theta2 + vel2*dt
+           
+            #Reevaluacion de la posicion de cada bolita
+            bolita1.pos = vector(l1*math.sin(theta1),-(l1*math.cos(theta1)),-5) 
+            
+            bolita2.pos = bolita1.pos +vector(l2*math.sin(theta2),-l2*math.cos(theta2),0)
+            
+            #Reevaluacion del eje sobre el que se crea el cilindro
+            cuerda2.pos = (bolita1.pos)
+            cuerda2.axis = (bolita2.pos - bolita1.pos)
+            cuerda.axis = (bolita1.pos - punto_apoyo) 
+            
+            t = t + dt #Avance del tiempo
+            
+            curva1.plot( pos=(t, theta1) )
+            curva2.plot( pos=(t, theta2) )
+            
+    def __str__(self):
+        print('Este es un sistema de pendulo doble')
+            
+
+
+# =============================================================================
+# Acoplados
+# =============================================================================
+
+class Acoplados(object):
+    
+    def __init__(self, theta1, theta2, lo = 9.3, lp = 5, omega1 = 0.,
+            omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001):
+        
+        self.g = g
+        self.omega1 = omega1
+        self.omega2 = omega2
+        self.t = tmax*10
+        self.dt = dt
+        self.theta1 = theta1
+        self.theta2 = theta2
+        self.lo = lo
+        self.lp = lp
+        self.l = lo + lp
+       
+    def osc(self):
+        raise NotImplementedError
+        
+    def __str__(self):
+        print('Este es un sistema de pendulos acoplados')
+ 
+#Children classes
+class AcopleRigido(Acoplados):
+    
+    def __init__(self, theta1 = pi/3, theta2 = 0, lo = 9.3, lp = 5, omega1 = 0.,
+            omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001):
+        
+        Acoplados.__init__(self, theta1, theta2, lo, lp, omega1 = 0.,
+                           omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001)
+        
+    def osc(self):
+
+        scene = canvas(title = '<b>Pendulos por Acople Rigido Libres</b>',width = 645, height = 400,
+                       background = color.black)
+        
+        graf=graph(width=645,height=400,title='<b></b>',
+                    xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                    foreground=color.black, background=color.white)
+        recorrido1 = gcurve(graph=graf, label = 'Pendulo 1', color=color.orange) 
+        recorrido2 = gcurve(graph=graf, label = 'Pendulo 2', color=color.blue)
+        
+        t_i = 0
+                 
+        pivot1=vector(-1.15*self.lp,0,-10) 
+        pivot2=vector(1.15*self.lp,0,-10)
+                
+        w = -1/(2*self.lp + self.lo )
+
+        acople = cylinder(pos=vector(pivot1.x, -self.lo, -10), axis= vector(pivot2.x, -self.lo, -10) - vector(pivot1.x, -self.lo, -10), radius=0.1, color=color.gray(0.3))
+        
+        esfera1=sphere(pos=vector(pivot1.x + self.lp *sin(self.theta1), -self.lo - self.lp*cos(self.theta1), -10),radius=0.55,
+                       color=color.white,make_trail = True, 
+                       trail_type = 'points',trail_color = color.orange, 
+                       interval=25, retain=50)
+        esfera2=sphere(pos=vector(pivot2.x + self.lp*sin(self.theta2), -self.lo - self.lp*cos(self.theta2), -10),radius=0.55,
+                       color=color.white,make_trail = True, 
+                       trail_type = 'points',trail_color = color.blue, 
+                       interval=25, retain=50)
+        
+        techo1=box(pos=pivot1, size=vector(0.5,0.5,0.5), color=color.gray(0.3))
+        techo2=box(pos=pivot2, size=vector(0.5,0.5,0.5), color=color.gray(0.3))
+        
+        cuerda_ac1= cylinder(pos=pivot1, axis=vector(pivot1.x, -self.lo, -10) - pivot1, radius=0.05, color=color.white)
+        cuerda_ac2= cylinder(pos=pivot2, axis=vector(pivot2.x, -self.lo, -10) - pivot2, radius=0.05, color=color.white)
+        cuerda1=cylinder(pos=vector(pivot1.x, -self.lo, -10), axis=esfera1.pos - vector(pivot1.x, -self.lo, -10), radius=0.05, color=color.white)
+        cuerda2=cylinder(pos=vector(pivot2.x, -self.lo, -10), axis=esfera2.pos - vector(pivot2.x, -self.lo, -10), radius=0.05, color=color.white)
+    
+        alpha1 = 0
+        while t_i < self.t: 
+          rate(1500) # Homogeneidad de computo
+          
+          alpha2 = w * (self.lo*alpha1 + 2*self.g*self.theta2)
+          alpha1 = w * (self.lo*alpha2 + 2*self.g*self.theta1)
+         
+          self.theta1+=(self.omega1*self.dt)
+          self.theta2+=(self.omega2*self.dt)
+          
+          self.omega1+=(alpha1*self.dt)
+          self.omega2+=(alpha2*self.dt)
+          
+          esfera1.pos = vector(pivot1.x + self.lp *sin(self.theta1), -self.lo - self.lp*cos(self.theta1), -10) # posicion nueva 
+          esfera2.pos = vector(pivot2.x + self.lp *sin(self.theta2), -self.lo - self.lp*cos(self.theta2), -10)
+          
+          cuerda1.axis = esfera1.pos - cuerda1.pos # extremo nuevo
+          cuerda2.axis = esfera2.pos - cuerda2.pos
+          t_i+=self.dt 
+          
+          recorrido1.plot((t_i, self.theta1))
+          recorrido2.plot((t_i, self.theta2))
             
         
-class PenduloAcoplado(Pendulo):
-    def __init__(self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 50, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 50, dt = 0.001)
+        
+class AcopleResorte(Acoplados):
     
-    def osc(self,constante_k, masa, distancia, angulo2):
+    def __init__(self, theta1 = pi/3, theta2 = 0, lo = 9.3, lp = 5, omega1 = 0.,
+            omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001):
+        
+        Acoplados.__init__(self, theta1, theta2, lo = 9.3, lp = 5, omega1 = 0.,
+                           omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001)
+    
+    def osc(self,constante_k, masa, distancia):
         
         #Reasignación de variables###
         
@@ -157,8 +413,8 @@ class PenduloAcoplado(Pendulo):
         k = constante_k                   # Constante de resorte
         m = masa                # Masa de las bolitas
         
-        theta1 = self.theta        # ángulo de la primera masa
-        theta2 = angulo2
+        theta1 = self.theta1        # ángulo de la primera masa
+        theta2 = self.theta2
         l = self.l              # Longitud de los pendulos
         d = distancia           # Distancia entre las dos bolitas
             
@@ -169,7 +425,8 @@ class PenduloAcoplado(Pendulo):
         x1, y1 =     l* np.sin(theta1), -l* np.cos(theta1) #Coordenadas bolita1
         x2, y2 = d + l* np.sin(theta2), -l* np.cos(theta2) #Coordenadas bolita2
             
-        self.display
+        scene = canvas(title = '<b>Pendulos por Acople de Resorte Libres</b>',width = 645, height = 400,
+                       background = color.black)
         
         #Objetos a definir
         techo = box( pos = vector(d/2, 0, 0), size = vector(d + 0.5, 0.5, 0.5),
@@ -194,12 +451,12 @@ class PenduloAcoplado(Pendulo):
                 xtitle = '<i>Tiempo</i>', ytitle = '<i>Amplitud</i>',
                 foreground = color.black, background = color.white)
     
-        fase1 = gcurve( color = color.orange,  label = 'bolita1' )
-        fase2 = gcurve( color = color.blue, label = 'bolita2' )
+        fase1 = gcurve( color = color.orange,  label = 'Pendulo 1' )
+        fase2 = gcurve( color = color.blue, label = 'Pendulo 2' )
         
         #Velocidades angulares iniciales
-        angular1 = self.omega
-        angular2 = self.omega
+        angular1 = self.omega1
+        angular2 = self.omega2
         
         t = 0
         
@@ -243,172 +500,102 @@ class PenduloAcoplado(Pendulo):
             fase1.plot( pos=(t, theta1) )
             fase2.plot( pos=(t, theta2) )
             
-class PenduloDoble(Pendulo):
-    def __init__(self, omega_zero, theta_zero,g = 9.784, l=10, tmax = 50, dt = 0.001):
-        Pendulo.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 50, dt = 0.001)
-    
-    def osc(self, masa1, masa2, angulo2, velocidad2):
-        l1 = self.l
-        l2 = self.l
-        g = self.g
-        theta1 = self.theta # Angulo interno
-        theta2 = angulo2
-        m1 = masa1
-        m2 = masa2
-        mt = m1+m2
-        
-        punto_apoyo= vector(0,0,-5) # Eje de oscilacion del pendulo
-        vel1 = self.omega
-        vel2 = velocidad2
-        T = self.t
-        
-        
-        # Linea que define el display o canvas
-        self.display        
-        # Cubo donde se fija el punto de apoyo o eje del pendulo
-        techo = box(pos=punto_apoyo,size=vector(0.5,0.5,0.5), color = color.gray(0.3))
-       
-        # Esfera que cuelga del pendulo
-        bolita1 = sphere(
-            pos=vector(l1*math.sin(theta1),-l1*math.cos(theta1),-5),
-            radius = l1*0.035,
-            color = color.white, 
-            make_trail = True, 
-            trail_type = 'points', 
-            trail_color = color.orange, 
-            interval=25, 
-            retain=50   
-            )
-        
-        bolita2 = sphere(
-            pos=vector(l1*math.sin(theta1) + l2*math.sin(theta2),
-                       -l1*math.cos(theta1)-l2*math.cos(theta2),
-                       -5
-                       ),
-            radius = l2*0.035,
-            color = color.white, 
-            make_trail = True, 
-            trail_type = 'points', 
-            trail_color = color.blue,
-            interval=25,
-            retain=50
-            )
-        
-        #Objeto del que tiende la masa del pendulo
-        cuerda = cylinder(pos=punto_apoyo,
-            axis=(bolita1.pos - punto_apoyo),
-            radius=0.05, color=color.white
-            )
-        
-        #Objeto del que tiende la segunda masa
-        cuerda2 = cylinder(pos=bolita1.pos,
-            axis=(bolita2.pos - bolita1.pos),
-            radius=0.05, color=color.white
-            )
-        
-        
-        t = 0
-        dt = self.dt
-        cos21 = math.cos(theta2-theta1)
-        sin21 = math.sin(theta2-theta1)
-        
-        cos12 = math.cos(theta1-theta2)
-        sin12 = math.sin(theta1-theta2)
-    
-    
-        
-        
-        #Se crea una grafica de curva de color verde
-        gd = graph( width = 600, height = 300,
-        title = '<b></b>',
-        xtitle = '<i>Tiempo</i>', ytitle = '<i>Amplitud</i>',
-        foreground = color.black, background = color.white)
-    
-        curva1 = gcurve( color = color.orange,  label = 'bolita1' )
-        curva2 = gcurve( color = color.blue, label = 'bolita2' )
-            
-        # Loop que hace que el pendulo se mueva reevaluando su posición durante un tiempo
-        while t < T:
-            #Número de calculos por segundo que se hacen. Determina velocidad de animacion
-            rate(1500)
-            
-            # Aceleracion angular
-                #Partes de la ecuación
-            pa = -m2*l2*vel2**2*sin12-mt*g*math.sin(theta1)
-            pb = m2*l2*cos12
-            pc = (l1*vel1**2*sin12-g*math.sin(theta2))/l2  
-            pd = mt*l1
-            pe = l1/l2*cos12
-            
-            angular1 = (pa-pb*pc)/(pd-pb*pe)
-            
-            angular2 = pc-pe*angular1
-            
-            vel1 = vel1 + angular1*dt # Velocidad angular
-            
-            vel2 = vel2 + angular2*dt
-            
-            theta1 = theta1 + vel1*dt # Reevaluacion del ángulo interno del pendulo
-            theta2 = theta2 + vel2*dt
-           
-            #Reevaluacion de la posicion de cada bolita
-            bolita1.pos = vector(l1*math.sin(theta1),-(l1*math.cos(theta1)),-5) 
-            
-            bolita2.pos = bolita1.pos +vector(l2*math.sin(theta2),-l2*math.cos(theta2),0)
-            
-            #Reevaluacion del eje sobre el que se crea el cilindro
-            cuerda2.pos = (bolita1.pos)
-            cuerda2.axis = (bolita2.pos - bolita1.pos)
-            cuerda.axis = (bolita1.pos - punto_apoyo) 
-            
-            t = t + dt #Avance del tiempo
-            
-            curva1.plot( pos=(t, theta1) )
-            curva2.plot( pos=(t, theta2) )
+
+
+# =============================================================================
+# Implementación
+# =============================================================================
 
 try:
     while True:
-
-        modo = input('Seleccione el sistema a simular.\nSimple:s\nAmortiguado:a\nForzado:f\nDoble:d\nAcoplado:c\n')
     
-        if modo == 'l':
-            Simple = PenduloLibre(omega_zero, theta_zero)
-            Simple.osc()
-            break
+        modo = input('Seleccione el sistema a simular.\nSimple:s\nAcoplado:a\nDoble:d\n')
         
-        if modo == 'a':
-            gamma = float(input('Asigne un coeficiente de amortiguamiento: ')) 
-            Amortiguado = PenduloAmortiguado(omega_zero, theta_zero)
-            Amortiguado.osc(gamma)
-            break
-        
-        if modo == 'f':
-            Forzado = PenduloForzado()
-            Forzado.osc()
-            break
-        
-
-        if modo == 'c':
-            constante_k = float(input('Asigne una constante de resorte: ')) 
-            masa = float(input('Asigne una masa para ambos péndulos: '))
-            distancia = float(input('Asigne una distancia d entre ambos péndulos: '))
-            angulo2 = float(input('Asigne un ángulo para el segundo péndulo: ')) 
-            Acoplado = PenduloAcoplado(omega_zero,theta_zero)
-            Acoplado.osc(constante_k, masa, distancia, angulo2)
-            
         if modo == 'd':
+            print('Determine los parametros de movimento:')
+            
             masa1 = float(input('Asigne una masa para el primer péndulo: ')) 
             masa2 = float(input('Asigne una masa para el segundo péndulo: ')) 
-            angulo2 = float(input('Asigne un ángulo para el segundo péndulo: ')) 
-            velocidad2 = float(input('Asigne una velocidad inicial para el segundo péndulo: ')) 
-            Doble = PenduloDoble(omega_zero,theta_zero)
-            Doble.osc(masa1, masa2, angulo2, velocidad2)
+            angulo1 = float(input('Asigne un ángulo inicial para el primer péndulo: ')) 
+            angulo2 = float(input('Asigne una ángulo inicial para el segundo péndulo: ')) 
+            
+            Doble = PenduloDoble(0,0, masa1, masa2, angulo1, angulo2)
+            Doble.osc()
+            break
+            
+            
+        if modo == 's':
+            
+            tipo = input('Seleccione el tipo de pendulo simple que desee.\nLibre:l\nAmortiguado:a\nForzado:f\n')
+            print('Por favor, determine los parametros de sus sistema:')
+            
+            theta_zero = float(input('Amplitud inicial: '))
+            
+            if tipo == 'l':
+                Libre = SLibre(theta_zero)
+                Libre.osc()
+                break
+            
+            elif tipo == 'a':
+                gamma = float(input('Asigne un coeficiente de amortiguamiento: ')) 
+                Amortiguado = SAmortiguado(theta_zero)
+                Amortiguado.osc(gamma)
+    
+                break
+            
+            elif tipo == 'f':
+                Forzado = SForzado()
+                Forzado.osc()
+                break
+            
+            else:
+                print('Tipo invalido, intente de nuevo')
+        
+        if modo == 'a':
+    
+            tipo = input('¿Qué tipo de pendulos acoplados desea simular?\nLibre:l\nAmortiguado:a\nForzado:f\n')
+            print('Por favor, determine los parametros de sus sistema:')
+            
+            
+            if tipo == 'l':
+                acople = input('¿Qué tipo de acople?\nVara Rigida:v\nResorte:r\n')
+                print('Por favor, determine los parametros de sus sistema:')
+                
+                if acople == 'r':
+                    constante_k = float(input('Asigne una constante de resorte: ')) 
+                    masa = float(input('Asigne una masa para ambos péndulos: '))
+                    distancia = float(input('Asigne una distancia d entre ambos péndulos: '))
+                    angulo1 = float(input('Asigne un ángulo para el primer péndulo: ')) 
+                    angulo2 = float(input('Asigne un ángulo para el segundo péndulo: ')) 
+                    
+                    Resorte = AcopleResorte(angulo1, angulo2)
+                    Resorte.osc(constante_k, masa, distancia)    
+                    break
+            
+                if acople == 'v':
+                    theta1 = float(input('Asigne un ángulo para el primer péndulo: ')) 
+                    theta2 = float(input('Asigne un ángulo para el segundo péndulo: '))
+                    lo = float(input('Asingne la distancia del pivote al acople: '))
+                    lp = float(input('Asingne la distancia del acople al los pendulos: '))
+                    
+                    Rigido = AcopleRigido(theta1, theta2, lo, lp)
+                    Rigido.osc()
+                    break
+                    
+            if tipo == 'a':
+    
+                break
+            
+            if tipo == 'f':
+    
+                break    
+            
+            else:
+                print('Tipo invalido, intente de nuevo')
+    
         else:
             print('Modo invalido, intente de nuevo')
  
-# Este except sirve para ver cual es la variable que falta o que error hay en el try
-#except Exception as e: 
-    #print(e)
 except:
     print('Por favor, defina las variables primero')
-##
+    
