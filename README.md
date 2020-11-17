@@ -6,7 +6,7 @@ Este es un repositorio en el cual se desarrollaran uno o varios proyectos simple
   Julián D. Osorio    
   Felipe Ospina Suarez   
   Carolina Valenzuela  
-# Proyecto
+# Primer proyecto - Exploración de la simulación de péndulos en vpython
 Se hará una simulación del movimiento de un péndulo en dos dimensiones usando la librería vpython.
 
 
