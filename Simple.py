@@ -10,10 +10,10 @@ from vpython import*
 # =============================================================================
 # Configuración inicial
 # =============================================================================
-display(title='Pendulos Acoplados simples', width=600, height=400,
+display(title='Pendulo simple', width=600, height=400,
         background=color.black)
 
-graph=graph(width=645,height=400,title='<b>Pendulos Acoplados simples</b>',
+graph=graph(width=645,height=400,title='<b>Pendulo simple</b>',
             xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
             foreground=color.black, background=color.black)
 recorrido = gcurve(graph=graph, color=color.orange) #Traza el recorrido deseado
@@ -21,7 +21,7 @@ recorrido = gcurve(graph=graph, color=color.orange) #Traza el recorrido deseado
 # =============================================================================
 # condiciones iniciales
 # =============================================================================
-theta = pi/3 # Angulo inicial
+theta = pi/4 # Angulo inicial
 g = 9.784 #gravedad 
 t=0 # tiempo inicial
 dt = 0.001 #diferencial temporal
@@ -51,7 +51,7 @@ while t < 104:
   alpha = w * sin(theta) # θ'' + g/l sen(θ) = 0
   omega+=(alpha*dt)
   
-  esfera.pos = vector(l*sin(theta), pivot.y-l*cos(theta), -10) # posicion nueva
+  esfera.pos = vector(l*sin(theta), -l*cos(theta), -10) # posicion nueva
   cuerda.axis = esfera.pos - cuerda.pos # extremo nuevo
   t+=dt 
   
