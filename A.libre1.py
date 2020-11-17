@@ -8,7 +8,7 @@ Created on Fri Nov 13 11:23:43 2020
 from vpython import*
 
 
-def angular(theta1 = pi/3, theta2 = 0, lp = 5, lo = 9.3, omega1 = 0.,
+def angular(theta1 = pi/3, theta2 = 0, lp = 9.3, lo = 5, omega1 = 0.,
             omega2 = 0., g = 9.784, tmax= 104, dt = 0.001):
     '''
     Forma 1.
@@ -44,14 +44,14 @@ def angular(theta1 = pi/3, theta2 = 0, lp = 5, lo = 9.3, omega1 = 0.,
     # =============================================================================
     # Configuración inicial
     # =============================================================================
-    display(title='Pendulos Acoplados libres', width=600, height=400,
+    scene = canvas(title='<b>Pendulos Acoplados libres<b>', width=600, height=400,
             background=color.black)
     
-    graf=graph(width=645,height=400,title='<b>Pendulos Acoplados libres</b>',
+    graf=graph(width=645,height=400,title='<b></b>',
                 xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
                 foreground=color.black, background=color.white)
-    recorrido1 = gcurve(graph=graf, color=color.orange) #Traza el recorrido deseado
-    recorrido2 = gcurve(graph=graf, color=color.blue)
+    recorrido1 = gcurve(graph=graf, label = 'Pendulo 1', color=color.orange) #Traza el recorrido deseado
+    recorrido2 = gcurve(graph=graf, label = 'Pendulo 2', color=color.blue)
     
     t_i = 0
     
@@ -63,7 +63,7 @@ def angular(theta1 = pi/3, theta2 = 0, lp = 5, lo = 9.3, omega1 = 0.,
     alpha1 = 0.
     alpha2 = 0.
     
-    w = -1/2*lp + lo 
+    w = -1/(2*lp + lo )
 
     # =============================================================================
     # Sistema referencia acople-cuerda-esfera
@@ -72,11 +72,11 @@ def angular(theta1 = pi/3, theta2 = 0, lp = 5, lo = 9.3, omega1 = 0.,
     
     esfera1=sphere(pos=vector(pivot1.x + lp *sin(theta1), -lo - lp*cos(theta1), -10),radius=0.55,
                    color=color.white,make_trail = True, 
-                   trail_type = 'points',trail_color = color.purple, 
+                   trail_type = 'points',trail_color = color.orange, 
                    interval=25, retain=50)
     esfera2=sphere(pos=vector(pivot2.x + lp*sin(theta2), -lo - lp*cos(theta2), -10),radius=0.55,
                    color=color.white,make_trail = True, 
-                   trail_type = 'points',trail_color = color.green, 
+                   trail_type = 'points',trail_color = color.blue, 
                    interval=25, retain=50)
     
     techo1=box(pos=pivot1, size=vector(0.5,0.5,0.5), color=color.red)
@@ -92,14 +92,15 @@ def angular(theta1 = pi/3, theta2 = 0, lp = 5, lo = 9.3, omega1 = 0.,
     # movimiento
     # =============================================================================
     
+    alpha1 = 0
     while t_i < tmax: 
       rate(1500) # Homogeneidad de computo
       
+      alpha2 = w * (lo*alpha1 + 2*g*theta2)
+      alpha1 = w * (lo*alpha2 + 2*g*theta1)
+      
       theta1+=(omega1*dt)
       theta2+=(omega2*dt)
-      
-      aplpha2 = w * (lo*alpha1 + 2*g*theta2)
-      alpha1 = w * (lo*alpha2 + 2*g*theta1)
       
       omega1+=(alpha1*dt)
       omega2+=(alpha2*dt)
@@ -231,4 +232,4 @@ def amplitud(x1 = 4., x2 = 0.1, lp = 5, lo = 9.3, A = 1.5, B = 1.5,
       recorrido2.plot((t_i, x2))
       
 angular()
-#amplitud()
+#amplitud() -> no funcional
