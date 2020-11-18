@@ -3,7 +3,7 @@
 Created on Sun Nov 15 18:11:22 2020
 
 <<<<<<< HEAD
-@author: Laura Viviana A. - Julián D. Osorio - Gabriel Muriel
+@author: Laura Viviana A. - Julián D. Osorio - Gabriel Muriel - Carolina Valenzuela
 =======
 @author: gabit
 >>>>>>> 8c304802d62858a865f87de96d071a00724e8679
@@ -151,8 +151,53 @@ class SForzado(Simple):
     
     def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10, tmax = 10.4, dt = 0.001):
         Simple.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
-
-
+    def osc(self,A,Omega,gamma):
+        '''
+        
+        Genera la animación correspondiente a un péndulo sobre el que actúa una fuerza externa sinusoidal cuya amplitud es A y cuya frecuencia es Omega, sometido a un factor de decaimiento gamma.
+        
+        Returns
+        -------
+        None.
+        
+        '''
+        scene = canvas(title = '<b>Pendulo Forzado</b>',width = 645, height = 400,
+                       background = color.black)
+        
+        graf=graph(width=645,height=400,title='',
+                    xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                    foreground=color.black, background=color.white)
+        recorrido = gcurve(graph=graf, label = 'Pendulo', color=color.orange) 
+        
+        F=A*sin(Omega*self.dt) 
+    
+        pivot=vector(0,0,-10)
+        esfera=sphere(pos=vector(pivot.x + self.l*sin(self.theta), pivot.y - self.l*cos(self.theta),-10), radius=0.55, color=color.white, make_trail = True, trail_type = 'points',trail_color = color.orange, interval=25, retain=50)
+        techo=box(pos=pivot, size=vector(0.5,0.5,0.5), color=color.red)
+        cuerda=cylinder(pos=pivot, axis=esfera.pos - pivot, radius=0.05, color=color.white)
+        
+        t=0
+        while t < self.t : 
+            
+            if self.omega!=Omega :
+                
+                rate(1500) 
+                
+                self.theta+=(self.omega*self.dt)
+                alpha=(self.natural*sin(self.theta)) - (gamma*self.omega) + F
+                self.omega+=(alpha*self.dt)
+                
+                pivot = vector(A*cos(Omega*t), 0, -10)
+                techo.pos = pivot
+                esfera.pos = vector(pivot.x + self.l*sin(self.theta), pivot.y - self.l*cos(self.theta),-10) 
+                cuerda.pos = pivot
+                cuerda.axis = esfera.pos - cuerda.pos
+                t+=self.dt 
+                
+                recorrido.plot((t, self.theta))
+              
+            else:
+                continue  
             
             
 # =============================================================================
