@@ -672,7 +672,7 @@ try:
         
         if modo == 'a':
     
-            tipo = input('¿Qué tipo de pendulos acoplados desea simular?\nLibre:l\nAmortiguado:a\nForzado:f\n')
+            tipo = input('¿Qué tipo de pendulos acoplados desea simular?\nLibre:l\nAmortiguado:a\n')
             print('Por favor, determine los parametros de sus sistema:')
             
             
