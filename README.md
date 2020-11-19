@@ -21,15 +21,23 @@ En _Implementación.py_ se encontrarán todas las simulaciones creadas, en donde
 
 ### Paso a paso 🚀
 
-I.	Si se desea simular un _péndulo simple_ el usuario tendrá que: 
+I.	Si se desea simular un _péndulo simple_ el usuario tendrá que:
+
     1.	Ingresar el comando “s”
-    2.	Seleccionar si quiere que este sea péndulo simple libre (con el comando       “Libre”), péndulo simple amortiguado (con el comando “Amortiguado”) o péndulo simple forzado (con el comando “Forzado”).
+    
+    2.	Seleccionar si quiere que este sea péndulo simple libre (con el comando “Libre”), péndulo simple amortiguado (con el comando “Amortiguado”) o péndulo simple forzado (con el comando “Forzado”).
+    
     3.	Determinar los parámetros del sistema según la elección previa.
+    
 II.	Si se desea simular péndulos acoplados el usuario tendrá que:
+
     1.	Ingresar el comando “a”
-    2.	Responder a la pregunta con “Libre” si se desea simular un sistema de péndulos acoplados simple.
-        - Posterior a esto tendrá que elegir si desea que su acople sea por medio de una  “Vara rígida” o un “Resorte” (así como se encuentra dentro de las comillas)
-        - Asignar los parámetros correspondientes
+    
+    2.	Si se desea simular un sistema de péndulos acoplados simple:
+        a. Responder a la pregunta con “Libre”
+        b. Elegir si desea que su acople sea por medio de una  “Vara rígida” o un “Resorte” (tal como se encuentra dentro de las comillas)
+        c. Asignar los parámetros correspondientes
+        
     3.	Si se desea simular un péndulo acoplado amortiguado, tendrá que elegir “Amortiguado” y si este quiere que sea péndulo acoplado forzado, se tendrá que elegir “Forzado” y asignar los parámetros correspondientes.
 
 ### Analice las pruebas 🔩
