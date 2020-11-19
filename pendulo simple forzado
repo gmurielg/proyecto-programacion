@@ -39,15 +39,18 @@ t=0
 while t < tmax:
     if omega_zero!=Omega: 
         rate(1500) # Homogeneidad de computo
-    
+        
         theta_zero+=(omega_zero*dt)
-        alpha=(natural*sin(theta_zero)) - (gamma*omega_zero) + F # θ'' + \gamma θ' + g/l sen(θ) = F
+        alpha=(w*sin(theta_zero)) - (gamma*omega_zero) + F # θ'' + \gamma θ' + g/l sen(θ) = F
         omega_zero+=(alpha*dt)
-          
+        
+        pivot = vector(A*cos(Omega*t), 0, -10)        
+        techo.pos = pivot
         esfera.pos = vector(pivot.x + l*sin(theta_zero),pivot.y-l*cos(theta_zero),-10) #Posicion nueva
+        cuerda.pos = pivot
         cuerda.axis = esfera.pos - cuerda.pos # Extremo nuevo
         t+=dt 
-          
+            
         recorrido.plot((t, theta_zero))
     else:
         continue
