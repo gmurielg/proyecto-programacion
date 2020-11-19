@@ -151,10 +151,12 @@ class SForzado(Simple):
     
     def __init__ (self, theta_zero, omega_zero = 0, g = 9.784, l=10, tmax = 10.4, dt = 0.001):
         Simple.__init__(self, omega_zero, theta_zero, g = 9.784, l=10, tmax = 104, dt = 0.001)
+        
     def osc(self,A,Omega,gamma):
         '''
         
-        Genera la animación correspondiente a un péndulo sobre el que actúa una fuerza externa sinusoidal cuya amplitud es A y cuya frecuencia es Omega, sometido a un factor de decaimiento gamma.
+        Genera la animación correspondiente a un péndulo sobre el que actúa una fuerza externa sinusoidal 
+        cuya amplitud es A y cuya frecuencia es Omega, sometido a un factor de decaimiento gamma.
         
         Returns
         -------
@@ -546,6 +548,74 @@ class AcopleResorte(Acoplados):
             fase2.plot( pos=(t, theta2) )
             
 
+class AcopleAmort(Acoplados):
+    
+    def __init__(self, theta1 = pi/3, theta2 = 0, lo = 9.3, lp = 5, omega1 = 0.,
+            omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001):
+        
+        Acoplados.__init__(self, theta1, theta2, lo, lp, omega1 = 0.,
+                           omega2 = 0., g = 9.784, tmax= 10.4, dt = 0.001)
+        
+    def osc(self, gamma):
+
+        scene = canvas(title = '<b>Pendulos Acoplados Amortiguados</b>',width = 645, height = 400,
+                       background = color.black)
+        
+        graf=graph(width=645,height=400,title='<b></b>',
+                    xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                    foreground=color.black, background=color.white)
+        recorrido1 = gcurve(graph=graf, label = 'Pendulo 1', color=color.orange) 
+        recorrido2 = gcurve(graph=graf, label = 'Pendulo 2', color=color.blue)
+        
+        t_i = 0
+                 
+        pivot1=vector(-1.15*self.lp,0,-10) 
+        pivot2=vector(1.15*self.lp,0,-10)
+                
+        w = (2*self.lp + self.lo )
+
+        acople = cylinder(pos=vector(pivot1.x, -self.lo, -10), axis= vector(pivot2.x, -self.lo, -10) - vector(pivot1.x, -self.lo, -10), radius=0.1, color=color.gray(0.3))
+        
+        esfera1=sphere(pos=vector(pivot1.x + self.lp *sin(self.theta1), -self.lo - self.lp*cos(self.theta1), -10),radius=0.55,
+                       color=color.white,make_trail = True, 
+                       trail_type = 'points',trail_color = color.orange, 
+                       interval=25, retain=50)
+        esfera2=sphere(pos=vector(pivot2.x + self.lp*sin(self.theta2), -self.lo - self.lp*cos(self.theta2), -10),radius=0.55,
+                       color=color.white,make_trail = True, 
+                       trail_type = 'points',trail_color = color.blue, 
+                       interval=25, retain=50)
+        
+        techo1=box(pos=pivot1, size=vector(0.5,0.5,0.5), color=color.gray(0.3))
+        techo2=box(pos=pivot2, size=vector(0.5,0.5,0.5), color=color.gray(0.3))
+        
+        cuerda_ac1= cylinder(pos=pivot1, axis=vector(pivot1.x, -self.lo, -10) - pivot1, radius=0.05, color=color.white)
+        cuerda_ac2= cylinder(pos=pivot2, axis=vector(pivot2.x, -self.lo, -10) - pivot2, radius=0.05, color=color.white)
+        cuerda1=cylinder(pos=vector(pivot1.x, -self.lo, -10), axis=esfera1.pos - vector(pivot1.x, -self.lo, -10), radius=0.05, color=color.white)
+        cuerda2=cylinder(pos=vector(pivot2.x, -self.lo, -10), axis=esfera2.pos - vector(pivot2.x, -self.lo, -10), radius=0.05, color=color.white)
+    
+        alpha1 = 0
+        while t_i < self.t: 
+          rate(1500) # Homogeneidad de computo
+          
+          alpha2 = -1/w * (self.lo*alpha1 + gamma*(w*self.omega2 + self.lo*self.omega1) + 2*self.g*self.theta2)
+          alpha1 = -1/w * (self.lo*alpha2 + gamma*(w*self.omega1 + self.lo*self.omega2) + 2*self.g*self.theta1)
+         
+          self.theta1+=(self.omega1*self.dt)
+          self.theta2+=(self.omega2*self.dt)
+          
+          self.omega1+=(alpha1*self.dt)
+          self.omega2+=(alpha2*self.dt)
+          
+          esfera1.pos = vector(pivot1.x + self.lp *sin(self.theta1), -self.lo - self.lp*cos(self.theta1), -10) # posicion nueva 
+          esfera2.pos = vector(pivot2.x + self.lp *sin(self.theta2), -self.lo - self.lp*cos(self.theta2), -10)
+          
+          cuerda1.axis = esfera1.pos - cuerda1.pos # extremo nuevo
+          cuerda2.axis = esfera2.pos - cuerda2.pos
+          t_i+=self.dt 
+          
+          recorrido1.plot((t_i, self.theta1))
+          recorrido2.plot((t_i, self.theta2))
+
 
 # =============================================================================
 # Implementación
@@ -589,8 +659,12 @@ try:
                 break
             
             elif tipo == 'f':
-                Forzado = SForzado()
-                Forzado.osc()
+                A = float(input('Asignele una amplitud a la Fuerza que incide en el sistema: '))
+                Omega = float(input('Determine la frecuenciá de forzamiento: '))
+                gamma = float(input('Asigne un coeficiente de amortiguamiento: ')) 
+                
+                Forzado = SForzado(theta_zero)
+                Forzado.osc(A, Omega, gamma)
                 break
             
             else:
@@ -628,12 +702,17 @@ try:
                     break
                     
             if tipo == 'a':
-    
+                theta1 = float(input('Asigne un ángulo para el primer péndulo: ')) 
+                theta2 = float(input('Asigne un ángulo para el segundo péndulo: '))
+                lo = float(input('Asingne la distancia del pivote al acople: '))
+                lp = float(input('Asingne la distancia del acople al los pendulos: '))
+                gamma = float(input('Asigne un coeficiente de amortiguamiento: ')) 
+                
+                Amort = AcopleAmort(theta1, theta2, lo, lp)
+                Amort.osc(gamma)
+                
                 break
-            
-            if tipo == 'f':
-    
-                break    
+              
             
             else:
                 print('Tipo invalido, intente de nuevo')
