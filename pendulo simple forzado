@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Nov 18 22:30:49 2020
+
+@author: Carolina Valenzuela - Julián D. Osorio
+"""
+
+from vpython import *
+scene = canvas(title="<b>Pendulo Simple forzado</b>", width=600, height=400, background=color.black)
+    
+graf=graph(width=600,height=400,title='',
+                xtitle='<i>Tiempo (s)</i>',ytitle='<i>Amplitud (m)</i>',
+                foreground=color.black, background=color.white)
+recorrido = gcurve(graph=graf, color=color.orange)
+    
+
+#Condiciones iniciales
+omega_zero=0
+theta_zero=pi/4
+dt=0.001
+tmax=104
+g=9.784
+l=10
+natural=-g/l
+
+Omega=2.75
+A=1.5
+F=A*sin(Omega*dt) #Forzamiento
+gamma=0.05 #Amortiguamiento
+
+pivot=vector(0,0,-10)
+esfera=sphere(pos=vector(pivot.x + l*sin(theta_zero),pivot.y - l*cos(theta_zero),-10), radius=0.55, color=color.white,make_trail = True, trail_type = 'points',trail_color = color.orange, interval=25, retain=50)
+techo=box(pos=pivot, size=vector(0.5,0.5,0.5), color=color.red)
+cuerda=cylinder(pos=pivot, axis=esfera.pos-pivot, radius=0.05, color=color.white)
+
+t=0
+
+ 
+while t < tmax:
+    if omega_zero!=Omega: 
+        rate(1500) # Homogeneidad de computo
+    
+        theta_zero+=(omega_zero*dt)
+        alpha=(natural*sin(theta_zero)) - (gamma*omega_zero) + F # θ'' + \gamma θ' + g/l sen(θ) = F
+        omega_zero+=(alpha*dt)
+          
+        esfera.pos = vector(pivot.x + l*sin(theta_zero),pivot.y-l*cos(theta_zero),-10) #Posicion nueva
+        cuerda.axis = esfera.pos - cuerda.pos # Extremo nuevo
+        t+=dt 
+          
+        recorrido.plot((t, theta_zero))
+    else:
+        continue
